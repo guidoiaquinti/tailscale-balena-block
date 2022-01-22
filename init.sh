@@ -10,15 +10,12 @@ if [ -z "${TAILSCALE_KEY}" ]; then
     exit 1
 fi
 
-if [ ! -z "${TAILSCALE_EXIT_NODE}" ]; then
+if [ -n "${TAILSCALE_EXIT_NODE}" ]; then
     TAILSCALE_EXIT_NODE_FLAG="--advertise-exit-node"
 fi
 
 # Wait 5s for the daemon to start and then run tailscale up to configure
 tailscaled --tun=userspace-networking -state=/tailscale/tailscaled.state &
 sleep 5
-tailscale up \
-    --authkey "${TAILSCALE_KEY}" \
-    ${TAILSCALE_EXIT_NODE_FLAG} \
-    $@
+tailscale up --authkey "${TAILSCALE_KEY}" ${TAILSCALE_EXIT_NODE_FLAG} "$@"
 fg
